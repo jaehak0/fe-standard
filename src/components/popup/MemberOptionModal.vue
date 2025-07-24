@@ -8,6 +8,7 @@ const props = defineProps({
   member: Object,
   mode: { type: String, default: 'add' }, // add or edit
   onClose: Function,
+  onSubmit: Function,
 });
 const memberStore = useMemberStore()
 const isEdit = computed(() => props.mode === "edit");
@@ -63,14 +64,14 @@ async function handleSubmit() {
     return;
   }
   // 서버로 제출
-  // props.onSubmit({ ...localMember });
-  if (isEdit.value) {
-    await memberStore.editMember({ ...props.member, ...localMember }) // user_key 유지
-    // alert("회원 정보가 수정되었습니다.")
-  } else {
-    await memberStore.addMember({ ...localMember })
-    // alert("회원이 등록되었습니다.")
-  }
+  props.onSubmit({ ...localMember });
+  // if (isEdit.value) {
+  //   await memberStore.editMember({ ...props.member, ...localMember }) // user_key 유지
+  //   // alert("회원 정보가 수정되었습니다.")
+  // } else {
+  //   await memberStore.addMember({ ...localMember })
+  //   // alert("회원이 등록되었습니다.")
+  // }
   props.onClose() // 저장 후 모달 닫기
 }
 function formatPhone(e) {
@@ -84,8 +85,20 @@ function formatPhone(e) {
   }
   localMember.phone = value;
 }
+function limitAgeLength(e) {
+  // 세 자리(999)까지만 입력 가능, 150 초과면 150으로 자동 조정
+  let value = e.target.value;
+  if (value.length > 3) {
+    value = value.slice(0, 3);
+  }
+  if (parseInt(value, 10) > 150) {
+    value = '150';
+  }
+  e.target.value = value;
+  localMember.age = Number(value);
+}
 </script>
-
+<!--                 pattern="^[가-힣a-zA-Z]{2,20}$" -->
 <template>
   <div v-if="visible" class="modal-backdrop">
     <div class="modal-box">
@@ -102,8 +115,8 @@ function formatPhone(e) {
             <input
                 v-model="localMember.nick"
                 required
+                type="tel"
                 placeholder="이름을 입력하세요"
-                pattern="^[가-힣a-zA-Z]{2,20}$"
                 maxlength="20"
                 />
           </div>
@@ -116,6 +129,7 @@ function formatPhone(e) {
                 max="150"
                 required
                 placeholder="나이 입력 (숫자)"
+                @input="limitAgeLength"
                 />
           </div>
           <div class="form-row">

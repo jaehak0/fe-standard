@@ -14,12 +14,15 @@
 
 <style>
 .main-footer {
+  position: fixed;
+  left: 50%;
+    transform: translateX(-50%);
   height: 48px;
   display: flex;
   align-items: center;
-  border-top: 1px solid #ddd;
+  /* border-top: 1px solid #ddd; */
   padding: 0 10px;
-  font-size: 15px;
+  font-size: 12px;
   color: #444;
   flex-direction: column;
 }
@@ -36,12 +39,12 @@
 .footer-info {
   flex: 1;
   text-align: center;
-  font-size: 1.0rem;
+  font-size: 12px;
   color: #666;
   letter-spacing: -0.5px;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 820px) {
   .main-footer {
     height: 36px;
     padding: 0 4px;

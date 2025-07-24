@@ -43,7 +43,7 @@ defineProps({
   font-weight: bold;
   font-size: 18px;
 }
-@media (max-width: 768px) {
+@media (max-width: 820px) {
   .main-header {
     height: 40px;
     padding: 0 4px;
@@ -55,7 +55,7 @@ defineProps({
     height: 22px;
   }
   .header-title {
-    font-size: 15px;
+    font-size: 12px;
     letter-spacing: -0.5px;
   }
 }
@@ -72,7 +72,7 @@ defineProps({
     height: 15px;
   }
   .header-title {
-    font-size: 12.5px;
+    font-size: 10px;
     font-weight: 600;
     word-break: keep-all;
     white-space: normal;

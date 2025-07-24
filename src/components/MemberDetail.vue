@@ -1,5 +1,6 @@
 <script setup>
     defineProps({ member: Object })
+    const emit = defineEmits(['edit', 'delete']);
 </script>
 
 <template>
@@ -98,5 +99,51 @@ font-size: clamp(10px, 20vw, 15px);
 .button:focus {
   border: 1.5px solid #bdbdbd !important;
   background: #f5f5f5 !important; 
+}
+@media (max-width: 820px) {
+  .member-detail-box {
+    font-size: 10px;
+    padding: 15px 8px;
+    max-width: 98vw;
+        min-height: 28vh;
+    max-height: 28vh;
+  }
+  .member-detail-row .label,
+  .member-detail-row .value {
+    font-size: 0.98em;
+  }
+  .edit-button, .delete-button {
+    font-size: 14px;
+    padding: 5px 9px;
+  }
+}
+
+/* 480px 이하 */
+@media (max-width: 480px) {
+  .member-detail-box {
+    font-size: 10px;
+    /* padding: 8px 1vw; */
+    max-width: 99vw;
+    min-height: 28vh;
+    max-height: 28vh;
+    margin: 7px 0;
+  }
+  .member-detail-row {
+    /* flex-direction: column; */
+    gap: 3px;
+    align-items: flex-start;
+  }
+  .member-detail-row .label,
+  .member-detail-row .value {
+    font-size: 0.96em;
+  }
+  .edit-button, .delete-button {
+    font-size: 12px;
+    padding: 3px 7px;
+  }
+  .member-detail-buttons {
+    gap: 7px;
+    /* margin-top: 10px; */
+  }
 }
 </style>

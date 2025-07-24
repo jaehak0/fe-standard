@@ -14,11 +14,6 @@ import Toast from './popup/ToastMessage.vue' // Toast import
 
 // const members = ref([]);
 const selectedIdx = ref(0);
-// const selectedMember = ref(null);
-// const totalCount = ref(0);
-// const page = ref(1);
-// const size = ref(10);
-// const totalPages = ref(1);
 const keyword = ref('');
 const toastMessage = ref('');
 const toastShow = ref(false);
@@ -48,6 +43,7 @@ function showToast(msg = "저장되었습니다!") {
 // 팝업 submit (add/edit)
 async function handleModalSubmit(memberData) {
   if (editMode.value === "add") {
+    console.log("여기?",memberData);
     await createMember(memberData); // API 호출
     showToast("회원이 등록되었습니다.");
   } else {
@@ -78,27 +74,6 @@ async function handleSelect(idx) {
   const mem = members.value[idx]
   if (mem) await loadDetail(mem.user_key)
 }
-
-
-// function handleEdit() { alert('수정 기능 구현') }
-// function handleDelete() { alert('삭제 기능 구현') }
-
-// onMounted(async () => {
-//   const list = await fetchMemberList({ page: 1, size: 10 })
-//   members.value = list.members
-//   totalCount.value = list.total_count 
-//   // 최초 첫 번째 멤버 상세 정보 로드
-//   if (members.value.length > 0) loadDetail(members.value[0].user_key)
-// })
-// async function fetchList() {
-//   const result = await fetchMemberList({ page: page.value, size: size.value });
-//   members.value = result.members
-//   totalPages.value = result.total_pages
-//   console.log("회원 목록:", memberStore.members)
-//   console.log("전체 회원수:", memberStore.totalCount)
-// }
-
-// onMounted(fetchList)
 
 async function load(pageNum = 1, keyword = '') {
   const result = await fetchMemberList({ page: pageNum, size: size.value, nick:keyword,email:keyword,phone:keyword});
@@ -249,7 +224,7 @@ body {
 .member-table th {
   background: #f8f8f8;
 }
-@media (max-width: 768px) {
+@media (max-width: 820px) {
   .layout-main {
     flex-direction: column;
     gap: 14px;
@@ -268,11 +243,11 @@ body {
     gap: 7px;
   }
   .member-table th, .member-table td {
-    font-size: 12px;
+    font-size: 10px;
     padding: 3px 2px;
   }
   .member-table {
-    font-size: 12px;
+    font-size: 10px;
     /* min-width: 520px; 표 컬럼 잘림 방지, 가로스크롤 허용 */
     overflow-x: auto;
     /* display: block; */
@@ -284,5 +259,6 @@ body {
     padding: 10px 4vw 15px 4vw !important;
     font-size: 14px !important;
   }
+  
 }
 </style>

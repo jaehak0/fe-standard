@@ -10,6 +10,7 @@ const memberStore = useMemberStore()
 //   totalPages: { type: Number, default: 1 },
 //   size: { type: Number, default: 10 }     // ← 기본값 10으로 지정
 // });
+const selected = ref(0);
 const members = computed(() => memberStore.members);
 const page = computed(() => memberStore.page);
 const totalPages = computed(() => memberStore.totalPages);
@@ -76,7 +77,7 @@ function handleSelect(i) {
 <template>
   <div>
     <div style="display: flex; gap: 8px; margin-bottom: 8px;">
-      <input type="text"  v-model="searchKeyword" placeholder="이름, 이메일, 전화번호로 검색..." style="flex:1;" />
+      <input type="text"  v-model="searchKeyword" placeholder="이름, 이메일, 전화번호로 검색..." style="flex:1;" @keyup.enter="handleSearch" />
       <button @click="handleSearch">검색</button>
       <button @click="$emit('add')">회원 추가</button>
     </div>
@@ -145,14 +146,21 @@ function handleSelect(i) {
 .th-gender, .td-gender {
   display: table-cell;
 }
-.tr-header {
-  font-size: 1.0rem;
+.member-table th, .member-table td {
+  font-size: 14px;
 }
 
 /* 900px 이하: 성별 열 숨김 */
-@media (max-width: 900px) {
+@media (max-width: 980px) {
   .th-gender, .td-gender {
     display: none;
+  }
+  .member-table th, .member-table td {
+    font-size: 12px;
+  }
+    input, button, select {
+    font-size: 14px !important;
+    padding: 6px 9px !important;
   }
 }
 
@@ -161,21 +169,32 @@ function handleSelect(i) {
   .th-email, .td-email {
     display: none;
   }
+   .member-table th, .member-table td {
+    font-size: 12px;
+  }
 }
 .member-table {
   min-height: 62vh;
   max-height: 62vh;
+  cursor: pointer;
 }
 @media (max-width: 480px) {
   input, button, select {
-    font-size: 14px !important;
+    font-size: 10px !important;
     padding: 6px 9px !important;
   }
   .member-table {
     min-width: 0;  /* 👈 최소폭 없애기 */
     width: 100%;   /* 👈 꽉차게 */
-    font-size: 12px;
+    font-size: 10px;
     /* 나머지 스타일은 기존 유지 */
+  }
+  .member-table th, .member-table td {
+    font-size: 10px;
+  }
+  .pagination-btn {
+    width: 20px !important;
+    height: 18px !important;
   }
 }
 .pagination-bar {
