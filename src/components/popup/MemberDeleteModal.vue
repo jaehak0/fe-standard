@@ -1,3 +1,19 @@
+<script setup>
+import { useMemberStore } from '../../stores/memberStore'
+const props = defineProps({
+  visible: Boolean,
+  member: Object,
+  onClose: Function,
+})
+const memberStore = useMemberStore()
+
+async function handleDelete() {
+  if (!props.member) return
+  await memberStore.removeMember(props.member.user_key)
+  props.onClose() // 삭제 후 모달 닫기
+}
+</script>
+
 <template>
   <div v-if="visible" class="modal-backdrop">
     <div class="modal-box">
@@ -9,26 +25,17 @@
         <div style="font-size:17px; text-align:center; margin-bottom:20px;">
           정말 <b>{{ member?.nick }}</b>님을 삭제하시겠습니까?
         </div>
-         <div style="font-size:14px; color:#a23; text-align:center; margin-bottom:18px;">
+        <div style="font-size:14px; color:#a23; text-align:center; margin-bottom:18px;">
           • 삭제 시 <b>복구할 수 없습니다.</b>
         </div>
         <div class="modal-footer" style="display:flex; gap:14px; justify-content:center;">
           <button @click="onClose">취소</button>
-          <button @click="() => onSubmit(member)" class="danger">삭제</button>
+          <button @click="handleDelete" class="danger">삭제</button>
         </div>
       </div>
     </div>
   </div>
 </template>
-
-<script setup>
-const props = defineProps({
-  visible: Boolean,
-  member: Object,
-  onSubmit: Function,
-  onClose: Function,
-});
-</script>
 
 <style scoped>
 .modal-backdrop {
@@ -39,7 +46,8 @@ const props = defineProps({
 .modal-box {
   background: #fff;
   border: 1.5px solid #d4d4d4;
-  padding: 28px 36px 22px 36px;
+  /* padding: 5px 36px 22px 36px; */
+  padding-left: 20px;
   min-width: 340px; border-radius: 12px;
   box-shadow: 0 6px 18px 0 rgba(60,70,90,0.12);
 }
@@ -62,7 +70,12 @@ const props = defineProps({
   transition: background 0.13s;
 }
 .danger:hover { background: #b81414; }
-
+button:focus,
+button:active {
+  outline: none;
+  box-shadow: none;
+  border-color: inherit;  /* 기존 border 색 유지 */
+}
 
 /* 모바일 (600px 이하) 대응 */
 @media (max-width: 600px) {

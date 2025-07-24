@@ -1,3 +1,91 @@
+
+
+<script setup>
+import { reactive, computed, watch } from "vue";
+import { useMemberStore } from "../../stores/memberStore"
+const props = defineProps({
+  visible: Boolean,
+  member: Object,
+  mode: { type: String, default: 'add' }, // add or edit
+  onClose: Function,
+});
+const memberStore = useMemberStore()
+const isEdit = computed(() => props.mode === "edit");
+const localMember = reactive({
+  nick: "",
+  email: "",
+  phone: "",
+  gender: "M", // 기본값 남성
+});
+
+watch(
+  () => [props.visible, props.mode,props.member],
+  ([visible, mode]) => {
+    if (visible && mode === "add") {
+      // 회원추가일 때 항상 초기화!
+      localMember.nick = "";
+      localMember.email = "";
+      localMember.age = 0;
+      localMember.phone = "";
+      localMember.gender = "M"; // 기본값
+    } else if (visible && mode === "edit" && props.member) {
+      // 수정일 때는 복사!
+      Object.assign(localMember, props.member);
+    }
+  },
+  { immediate: true }
+);
+
+async function handleSubmit() {
+  // 이름 검사
+  if (!/^[가-힣a-zA-Z]{2,20}$/.test(localMember.nick)) {
+    alert("이름은 한글/영문 2~20자로 입력해주세요.");
+    return;
+  }
+  // 나이 검사
+  if (!localMember.age || localMember.age < 0 || localMember.age > 150) {
+    alert("나이는 0~150 사이의 숫자로 입력해주세요.");
+    return;
+  }
+  // 전화번호 검사
+  if (!/^010-\d{4}-\d{4}$/.test(localMember.phone)) {
+    alert("전화번호는 010-1234-5678 형식으로 입력해주세요.");
+    return;
+  }
+  // 이메일 검사 (간단체크, 이미 type=email)
+  if (!localMember.email || localMember.email.length > 40) {
+    alert("올바른 이메일을 입력해주세요.");
+    return;
+  }
+  // 성별 검사
+  if (!localMember.gender) {
+    alert("성별을 선택해주세요.");
+    return;
+  }
+  // 서버로 제출
+  // props.onSubmit({ ...localMember });
+  if (isEdit.value) {
+    await memberStore.editMember({ ...props.member, ...localMember }) // user_key 유지
+    // alert("회원 정보가 수정되었습니다.")
+  } else {
+    await memberStore.addMember({ ...localMember })
+    // alert("회원이 등록되었습니다.")
+  }
+  props.onClose() // 저장 후 모달 닫기
+}
+function formatPhone(e) {
+  let value = e.target.value.replace(/\D/g, ""); // 숫자만 남김
+  if (value.length <= 3) {
+    value = value;
+  } else if (value.length <= 7) {
+    value = value.replace(/(\d{3})(\d{1,4})/, "$1-$2");
+  } else {
+    value = value.replace(/(\d{3})(\d{4})(\d{1,4})/, "$1-$2-$3");
+  }
+  localMember.phone = value;
+}
+</script>
+
 <template>
   <div v-if="visible" class="modal-backdrop">
     <div class="modal-box">
@@ -75,90 +163,13 @@
             </div>
         </div>
         <div class="modal-footer">
-          <button type="submit" class="primary">{{ isEdit ? '수정' : '추가' }}</button>
+          <button type="submit" class="primary">{{ isEdit ? '저장' : '추가' }}</button>
           <button type="button" @click="onClose">취소</button>
         </div>
       </form>
     </div>
   </div>
 </template>
-
-<script setup>
-import { reactive, computed, watch } from "vue";
-const props = defineProps({
-  visible: Boolean,
-  member: Object,
-  mode: { type: String, default: 'add' }, // add or edit
-  onSubmit: Function,
-  onClose: Function,
-});
-const isEdit = computed(() => props.mode === "edit");
-const localMember = reactive({
-  nick: "",
-  email: "",
-  phone: "",
-  gender: "M", // 기본값 남성
-});
-
-watch(
-  () => [props.visible, props.mode],
-  ([visible, mode]) => {
-    if (visible && mode === "add") {
-      // 회원추가일 때 항상 초기화!
-      localMember.nick = "";
-      localMember.email = "";
-      localMember.age = 0;
-      localMember.phone = "";
-      localMember.gender = "M"; // 기본값
-    } else if (visible && mode === "edit" && props.member) {
-      // 수정일 때는 복사!
-      Object.assign(localMember, props.member);
-    }
-  },
-  { immediate: true }
-);
-
-function handleSubmit() {
-  // 이름 검사
-  if (!/^[가-힣a-zA-Z]{2,20}$/.test(localMember.nick)) {
-    alert("이름은 한글/영문 2~20자로 입력해주세요.");
-    return;
-  }
-  // 나이 검사
-  if (!localMember.age || localMember.age < 0 || localMember.age > 150) {
-    alert("나이는 0~150 사이의 숫자로 입력해주세요.");
-    return;
-  }
-  // 전화번호 검사
-  if (!/^010-\d{4}-\d{4}$/.test(localMember.phone)) {
-    alert("전화번호는 010-1234-5678 형식으로 입력해주세요.");
-    return;
-  }
-  // 이메일 검사 (간단체크, 이미 type=email)
-  if (!localMember.email || localMember.email.length > 40) {
-    alert("올바른 이메일을 입력해주세요.");
-    return;
-  }
-  // 성별 검사
-  if (!localMember.gender) {
-    alert("성별을 선택해주세요.");
-    return;
-  }
-  // 서버로 제출
-  props.onSubmit({ ...localMember });
-}
-function formatPhone(e) {
-  let value = e.target.value.replace(/\D/g, ""); // 숫자만 남김
-  if (value.length <= 3) {
-    value = value;
-  } else if (value.length <= 7) {
-    value = value.replace(/(\d{3})(\d{1,4})/, "$1-$2");
-  } else {
-    value = value.replace(/(\d{3})(\d{4})(\d{1,4})/, "$1-$2-$3");
-  }
-  localMember.phone = value;
-}
-</script>
 
 <style scoped>
 .modal-backdrop {
@@ -274,5 +285,11 @@ button:active { opacity: 0.9; }
   margin-right: 3px;
   width: 15px;
   height: 15px;
+}
+button:focus,
+button:active {
+  outline: none;
+  box-shadow: none;
+  border-color: inherit;  /* 기존 border 색 유지 */
 }
 </style>
