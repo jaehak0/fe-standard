@@ -39,8 +39,12 @@ function showToast(msg = "저장되었습니다!") {
     toastShow.value = true;
   }, 10); // (nextTick 효과)
 }
+// showToast의 message, setTimeout을 공통함수를 빼야함.
+// 화면 스택관리 - 업무 페이지 안에서 스택관리 필요
 
-// 팝업 submit (add/edit)
+// 팝업 submit (add/edit) -> handleModalSubmmit 변경 / submit을 받으면 모달이 닫혀야함.
+// param으로 mode가 올 수 있게, editMode는 없음.
+// reqCreateUser, reqUpdateUser
 async function handleModalSubmit(memberData) {
   if (editMode.value === "add") {
     console.log("여기?",memberData);
@@ -54,21 +58,15 @@ async function handleModalSubmit(memberData) {
   await load(page.value);
 }
 
-// 삭제 시 예시
+// 삭제 시 예시 -> onDeleteUser
 async function handleDeleteConfirm() {
   await deleteMember(deleteTarget.value.user_key);
   showToast("회원이 삭제되었습니다.");
   closeDeleteModal();
   await load(page.value);
 }
-async function loadMembers() {
-  // API 응답 구조에 따라 result.members 또는 members 등 구조 확인!
-  const result = await fetchMemberList();
-  // 만약 result.members라면:
-  members.value = result.members || [];
-  // 만약 result.result.members라면: members.value = result.result.members
-  selectedIdx.value = 0; // 첫번째 멤버 선택 (or -1로 초기화해도 됨)
-}
+
+// onSelectUserList
 async function handleSelect(idx) {
   selectedIdx.value = idx
   const mem = members.value[idx]
@@ -104,6 +102,7 @@ function handlePageChange(newPage) {
 }
 
 // 팝업 열기/닫기
+// openAddUser, openEditUser, closeEditUser 
 function openAddModal() {
   editMode.value = "add";
   editMember.value = null;
@@ -114,6 +113,8 @@ function openEditModal() {
   editMember.value = members.value[selectedIdx.value];
   showEditModal.value = true;
 }
+
+// 스스로 닫히게 하는 내용 확인
 function closeEditModal() {
   showEditModal.value = false;
 }
@@ -145,6 +146,7 @@ function closeDeleteModal() { showDeleteModal.value = false; }
           @search="handleSearch"
           @add="openAddModal"
         />
+        <!-- add -> btnAddUser , 함수 : onBtnAddUser -->
       </section>
       <aside class="detail-area">
         <MemberDetail
