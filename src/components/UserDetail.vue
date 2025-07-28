@@ -58,7 +58,7 @@ const g_emitToParentEvt = defineEmits(["onBtnUserUpdate", "onBtnUserDelete"]);
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
-    align-items: center;
+    /* align-items: center; */
     justify-content: center;
     min-height: 62vh;
     max-height: 62vh;
@@ -83,6 +83,8 @@ const g_emitToParentEvt = defineEmits(["onBtnUserUpdate", "onBtnUserDelete"]);
     display: flex;
     align-items: center;
     margin-bottom: 16px;
+    position: relative;
+    left: 25%;
 }
 
 .label {
@@ -117,6 +119,16 @@ const g_emitToParentEvt = defineEmits(["onBtnUserUpdate", "onBtnUserDelete"]);
 .button:focus {
     border: 1.5px solid #bdbdbd !important;
     background: #f5f5f5 !important;
+}
+@media (max-width: 1200px) {
+    .userDetail-detail-row {
+        left: 15%;
+    }
+}
+@media (max-width: 1000px) {
+    .userDetail-detail-row {
+        left: 10%;
+    }
 }
 
 @media (max-width: 820px) {
