@@ -324,7 +324,7 @@ function handleSelect(i) {
     outline: none;
     cursor: pointer;
     transition: background 0.12s, color 0.12s, border 0.12s;
-    box-shadow: 0 2px 4px 0 rgba(200, 200, 200, 0.06);
+    /* box-shadow: 0 2px 4px 0 rgba(200, 200, 200, 0.06); */
     margin: 0;
     padding: 0;
     user-select: none;
@@ -349,7 +349,7 @@ function handleSelect(i) {
 
 .pagination-btn.active,
 .pagination-btn:disabled.active {
-    background: rgb(41, 169, 219);
+    background: #3e77fa;
     color: white;
     border: 1.5px solid #d0d0d0;
     font-weight: 600;

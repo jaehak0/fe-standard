@@ -63,7 +63,13 @@ const g_emitToParentEvt = defineEmits(["onBtnUserUpdate", "onBtnUserDelete"]);
     min-height: 62vh;
     max-height: 62vh;
 }
-
+.edit-button,
+.delete-button {
+    background: #3e77fa;
+    font-size: 14px;
+    padding: 5px 9px;
+        
+}
 /* .detail-title {
   font-size: 18px;
   font-weight: 600;
@@ -149,6 +155,7 @@ const g_emitToParentEvt = defineEmits(["onBtnUserUpdate", "onBtnUserDelete"]);
     .delete-button {
         font-size: 14px;
         padding: 5px 9px;
+        
     }
 }
 
