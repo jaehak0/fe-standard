@@ -28,16 +28,17 @@ const g_emitToParentEvt = defineEmits(["onBtnUserUpdate", "onBtnUserDelete"]);
                 userDetail.gender === "M" ? "남자" : "여자"
             }}</span>
         </div>
+
         <div class="userDetail-detail-buttons">
             <button
                 class="edit=button"
-                @click="$g_emitToParentEvt('on-userDetail-update')"
+                @click="g_emitToParentEvt('onBtnUserUpdate')"
             >
                 수정
             </button>
             <button
                 class="delete=button"
-                @click="$g_emitToParentEvt('on-userDetail-delete')"
+                @click="g_emitToParentEvt('onBtnUserDelete')"
             >
                 삭제
             </button>

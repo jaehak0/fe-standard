@@ -26,12 +26,13 @@ const g_toastShow = ref(false);
 const g_showUpdateModal = ref(false);
 const g_editMode = ref("add"); // 'add' or 'edit'
 const g_editUser = ref(null);
-const g_showDeleteModal = ref(false);
 const g_deleteTarget = ref(null);
 const g_userStore = useUserStore();
 const g_commPopVisible = ref(false);
 const g_popHeaderMsg = ref("");
 const g_popBodyMsg = ref("");
+const g_popConfirmMsg = ref("");
+const g_userTableRef = ref(null);
 
 function showToast(msg = "저장되었습니다!") {
     g_toastMessage.value = msg;
@@ -67,9 +68,9 @@ async function onDeleteUser() {
     hideUserDeletePop();
 }
 
-async function onSelectUser(idx) {
+async function onClickUser(idx) {
     g_selectedIdx.value = idx;
-    const mem = g_userStore.users.value[idx];
+    const mem = g_userStore.users[idx];
     if (mem) await searchUserListDetail(mem.user_key);
 }
 
@@ -77,15 +78,19 @@ async function searchUserList(pageNum = 1) {
     g_userStore.searchUserList({
         page: pageNum,
         size: g_userStore.size,
-        nick: g_txtKeyword.value,
-        email: g_txtKeyword.value,
-        phone: g_txtKeyword.value,
+        nick: g_userTableRef.value?.g_searchKeyword,
+        email: g_userTableRef.value?.g_searchKeyword,
+        phone: g_userTableRef.value?.g_searchKeyword,
     });
 }
 
+function onPageChange(pgNum) {
+    searchUserList(pgNum);
+}
+
 async function searchUserListDetail(id) {
-    const detail = g_userStore.users.value.find((mem) => mem.user_key === id);
-    g_userStore.selectedUser.value = detail || null;
+    const detail = g_userStore.users.find((mem) => mem.user_key === id);
+    g_userStore.selectedUser = detail || null;
 }
 
 onMounted(() => {
@@ -94,7 +99,7 @@ onMounted(() => {
 
 // 팝업 열기/닫기
 // openAddUser, openEditUser, closeEditUser
-function openAddUserPop() {
+function showAddUserPop() {
     g_editMode.value = "add";
     g_editUser.value = null;
     g_showUpdateModal.value = true;
@@ -106,7 +111,7 @@ function onBtnUserAdd() {
 
 function showUserUpdatePop() {
     g_editMode.value = "edit";
-    g_editUser.value = g_userStore.users.value[g_selectedIdx.value];
+    g_editUser.value = g_userStore.users[g_selectedIdx.value];
     g_showUpdateModal.value = true;
 }
 
@@ -116,16 +121,19 @@ function onBtnUserUpdate() {
 
 // 삭제 팝업 관련
 function showUserDeletePop() {
-    g_deleteTarget.value = g_userStore.users.value[g_selectedIdx.value];
-    g_showDeleteModal.value = true;
+    g_deleteTarget.value = g_userStore.users[g_selectedIdx.value];
+    g_commPopVisible.value = true;
 }
 
 function onBtnUserDelete() {
+    g_popConfirmMsg.value = "삭제";
+    g_popHeaderMsg.value = "회원 삭제";
+    g_popBodyMsg.value = "선택한 회원을 삭제하시겠습니까?";
     showUserDeletePop();
 }
 
 function hideUserDeletePop() {
-    g_showDeleteModal.value = false;
+    g_commPopVisible.value = false;
 }
 
 // 스스로 닫히게 하는 내용 확인
@@ -133,8 +141,12 @@ function hideUserPop() {
     g_showUpdateModal.value = false;
 }
 
-function callbackCommPopConfirm() {}
-function callbackCommPopCancel() {}
+function callbackCommPopConfirm() {
+    onDeleteUser();
+}
+function callbackCommPopCancel() {
+    g_commPopVisible.value = false;
+}
 
 async function onLblUserDetail(id) {
     const detail = g_userStore.users.find((m) => m.user_key === id);
@@ -148,12 +160,14 @@ async function onLblUserDetail(id) {
         <main class="layout-main">
             <section class="table-area">
                 <UserTable
+                    ref="g_userTableRef"
                     :users="g_userStore.users"
                     :selected="g_selectedIdx"
                     :page="page"
                     :totalPages="g_userStore.totalPages"
                     :size="size"
-                    @onUserClick="onUserClick"
+                    @onPageChange="onPageChange"
+                    @onClickUser="onClickUser"
                     @onBtnUserSearch="onBtnUserSearch"
                     @onBtnUserAdd="onBtnUserAdd"
                 />
@@ -161,8 +175,7 @@ async function onLblUserDetail(id) {
             </section>
             <aside class="detail-area">
                 <UserDetail
-                    v-if="g_userStore.users.length"
-                    :user="g_userStore.users[g_selectedIdx]"
+                    :userDetail="g_userStore.users[g_selectedIdx]"
                     @onBtnUserUpdate="onBtnUserUpdate"
                     @onBtnUserDelete="onBtnUserDelete"
                 />
@@ -176,12 +189,13 @@ async function onLblUserDetail(id) {
             :onClose="hideUserPop"
         />
 
-        <CommonPopup
+        <CommonConfirmPop
             v-model:visible="g_commPopVisible"
             :popHeaderMsg="g_popHeaderMsg"
             :popBodyMsg="g_popBodyMsg"
-            :onConfirm="callbackCommPopConfirm"
-            :onCancel="callbackCommPopCancel"
+            :popConfirmMsg="g_popConfirmMsg"
+            @onConfirm="callbackCommPopConfirm"
+            @onCancel="callbackCommPopCancel"
         />
 
         <Toast :message="g_toastMessage" :show="g_toastShow" :duration="2000" />

@@ -4,23 +4,26 @@ import { useUserStore } from "../../stores/userStore";
 const g_propsFromParentEvt = defineProps({
     visible: Boolean,
     user: Object,
-    onClose: Function,
+    onConfirm: Function,
+    onCancel: Function,
+    popHeaderMsg: String,
+    popBodyMsg: String,
+    popConfirmMsg: String,
 });
-const userStore = useUserStore();
 
-async function onDeleteUser() {
-    if (!g_propsFromParentEvt.user) return;
-    await userStore.removeUser(g_propsFromParentEvt.user.user_key);
-    g_propsFromParentEvt.onClose(); // 삭제 후 모달 닫기
-}
+const g_emitToParentEvt = defineEmits(["onConfirm", "onCancel"]);
 </script>
 
 <template>
     <div v-if="visible" class="modal-backdrop">
         <div class="modal-box">
             <div class="modal-header">
-                <span>회원 삭제</span>
-                <button class="modal-close" @click="onClose" aria-label="닫기">
+                <span>{{ popHeaderMsg }}</span>
+                <button
+                    class="modal-close"
+                    @click="g_emitToParentEvt('onCancel')"
+                    aria-label="닫기"
+                >
                     ×
                 </button>
             </div>
@@ -32,25 +35,20 @@ async function onDeleteUser() {
                         margin-bottom: 20px;
                     "
                 >
-                    정말 <b>{{ user?.nick }}</b
-                    >님을 삭제하시겠습니까?
+                    {{ popBodyMsg }}
                 </div>
-                <div
-                    style="
-                        font-size: 14px;
-                        color: #a23;
-                        text-align: center;
-                        margin-bottom: 18px;
-                    "
-                >
-                    • 삭제 시 <b>복구할 수 없습니다.</b>
-                </div>
+
                 <div
                     class="modal-footer"
                     style="display: flex; gap: 14px; justify-content: center"
                 >
-                    <button @click="onClose">취소</button>
-                    <button @click="onDeleteUser" class="danger">삭제</button>
+                    <button @click="g_emitToParentEvt('onCancel')">취소</button>
+                    <button
+                        @click="g_emitToParentEvt('onConfirm')"
+                        class="danger"
+                    >
+                        {{ popConfirmMsg }}
+                    </button>
                 </div>
             </div>
         </div>

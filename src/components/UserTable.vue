@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, computed } from "vue";
+import { ref, onMounted, computed, defineExpose } from "vue";
 import { reqUserList } from "../api/userApi";
 import { useUserStore } from "../stores/userStore";
 const PAGE_GROUP_SIZE = 5;
@@ -16,9 +16,13 @@ const g_emitToParentEvt = defineEmits([
     "onUserClick",
     "onBtnUserSearch",
     "onBtnUserAdd",
+    "onPageChange",
 ]);
 
 const g_searchKeyword = ref("");
+defineExpose({
+    g_searchKeyword,
+});
 const g_currentPageGroup = computed(() =>
     Math.floor((g_page.value - 1) / PAGE_GROUP_SIZE)
 );
@@ -39,24 +43,24 @@ const g_visiblePages = computed(() =>
 function gotoPrevPage() {
     if (g_page.value > 1) {
         g_userStore.searchUserList({
-            g_page: g_page.value - 1,
-            g_size: g_size.value,
+            page: g_page.value - 1,
+            size: g_size.value,
         });
     }
 }
 function gotoNextPage() {
     if (g_page.value < g_totalPages.value) {
         g_userStore.searchUserList({
-            g_page: g_page.value + 1,
-            g_size: g_size.value,
+            page: g_page.value + 1,
+            size: g_size.value,
         });
     }
 }
 function gotoPrevGroup() {
     if (g_pageGroupStart.value > 1) {
         g_userStore.searchUserList({
-            g_page: g_pageGroupStart.value - 1,
-            g_size: g_size.value,
+            page: g_pageGroupStart.value - 1,
+            size: g_size.value,
         });
     }
 }
@@ -64,14 +68,14 @@ function gotoNextGroup() {
     console.log(g_pageGroupEnd.value);
     if (g_pageGroupEnd.value < g_totalPages.value) {
         g_userStore.searchUserList({
-            g_page: g_pageGroupEnd.value + 1,
-            g_size: g_size.value,
+            page: g_pageGroupEnd.value + 1,
+            size: g_size.value,
         });
     }
 }
-function searchUserList() {
+function searchUserList(pageNum = 1) {
     g_userStore.searchUserList({
-        g_page: 1,
+        g_page: pageNum,
         g_size: g_size.value,
         nick: g_searchKeyword.value,
         email: g_searchKeyword.value,
@@ -98,7 +102,7 @@ function handleSelect(i) {
                 @keyup.enter="searchUserList"
             />
             <button @click="searchUserList">검색</button>
-            <button @click="$g_emitToParentEvt('on-user-add')">
+            <button @click="g_emitToParentEvt('onBtnUserAdd')">
                 회원 추가
             </button>
         </div>
@@ -116,7 +120,7 @@ function handleSelect(i) {
                 <tr
                     v-for="(m, i) in g_users"
                     :key="m.user_key"
-                    @click="g_emitToParentEvt('on-lbl-user-detail', i)"
+                    @click="g_emitToParentEvt('onClickUser', i)"
                     :style="{ background: g_selected === i ? '#f3faff' : '' }"
                 >
                     <td class="td-number">
@@ -164,7 +168,7 @@ function handleSelect(i) {
             <button
                 v-for="p in g_visiblePages"
                 :key="p"
-                @click="g_page !== p && g_emitToParentEvt('on-page-change', p)"
+                @click="g_page !== p && g_emitToParentEvt('onPageChange', p)"
                 :class="['pagination-btn', { active: p === g_page }]"
                 :disabled="p === g_page"
                 type="button"

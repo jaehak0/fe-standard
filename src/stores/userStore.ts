@@ -13,7 +13,6 @@ export const useUserStore = defineStore("user", () => {
 
     // 회원 목록 조회
     async function searchUserList(params = { page: 1, size: 10 }) {
-        debugger;
         const result = await reqUserList(params);
         users.value = result.members;
         totalCount.value = result.total_count;
