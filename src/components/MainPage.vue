@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, onUnmounted } from "vue";
 import { useUserStore } from "../stores/userStore";
 import { storeToRefs } from "pinia";
 import HeaderSection from "./HeaderSection.vue";
@@ -33,6 +33,7 @@ const g_popHeaderMsg = ref("");
 const g_popBodyMsg = ref("");
 const g_popConfirmMsg = ref("");
 const g_userTableRef = ref(null);
+const g_isMobile = ref(window.innerWidth <= 820);
 
 function showToast(msg = "저장되었습니다!") {
     g_toastMessage.value = msg;
@@ -59,7 +60,9 @@ async function onSaveUser(userData) {
     hideUserPop();
     await searchUserList(g_userStore.page.value);
 }
-
+function onWindowResizing() {
+  g_isMobile.value = window.innerWidth <= 480;
+}
 // 삭제 시 예시 -> onDeleteUser
 async function onDeleteUser() {
     await reqDeleteUser(g_deleteTarget.value.user_key);
@@ -70,6 +73,7 @@ async function onDeleteUser() {
 
 async function onClickUser(idx) {
     g_selectedIdx.value = idx;
+    console.log(g_selectedIdx,idx);
     const mem = g_userStore.users[idx];
     if (mem) await searchUserListDetail(mem.user_key);
 }
@@ -90,13 +94,17 @@ function onPageChange(pgNum) {
 
 async function searchUserListDetail(id) {
     const detail = g_userStore.users.find((mem) => mem.user_key === id);
+    console.log(detail);
     g_userStore.selectedUser = detail || null;
 }
 
 onMounted(() => {
     searchUserList();
+    window.addEventListener('resize', onWindowResizing);
 });
-
+onUnmounted(() => {
+  window.removeEventListener('resize', onWindowResizing);
+});
 // 팝업 열기/닫기
 // openAddUser, openEditUser, closeEditUser
 function showAddUserPop() {
@@ -173,13 +181,16 @@ async function onLblUserDetail(id) {
                 />
                 <!-- add -> btnAddUser , 함수 : onBtnAddUser -->
             </section>
-            <aside class="detail-area">
+            <aside class="detail-area" v-if="!g_isMobile">
                 <UserDetail
                     :userDetail="g_userStore.users[g_selectedIdx]"
+                    :visible="!g_isMobile && !showDetailModal"
+                    @close="showDetailModal = false"
                     @onBtnUserUpdate="onBtnUserUpdate"
                     @onBtnUserDelete="onBtnUserDelete"
                 />
             </aside>
+
         </main>
         <UserEditPop
             :visible="g_showUpdateModal"
@@ -227,7 +238,7 @@ body {
     flex-direction: row;
     gap: 32px;
     padding: 24px 16px;
-    min-height: 70vh;
+    min-height: 75vh;
 }
 
 @media (max-width: 900px) {

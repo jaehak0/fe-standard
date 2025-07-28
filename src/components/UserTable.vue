@@ -10,10 +10,12 @@ const g_users = computed(() => g_userStore.users);
 const g_page = computed(() => g_userStore.page);
 const g_totalPages = computed(() => g_userStore.totalPages);
 const g_size = computed(() => g_userStore.size);
-const g_selectedIdx = ref(0); // 필요하면 store에도 만들고 관리!
-
+// const g_selectedIdx = ref(0); // 필요하면 store에도 만들고 관리!
+const props = defineProps({
+  selected: Number,  // 반드시 선언되어야 함!
+});
 const g_emitToParentEvt = defineEmits([
-    "onUserClick",
+    "onClickUser",
     "onBtnUserSearch",
     "onBtnUserAdd",
     "onPageChange",
@@ -84,6 +86,7 @@ function searchUserList(pageNum = 1) {
 }
 function handleSelect(i) {
     g_selectedIdx.value = i;
+    console.log("g_selected",g_selectedIdx);
     const mem = g_users.value[i];
     if (mem) {
         g_userStore.loadUserDetail(mem.user_key);
@@ -110,9 +113,9 @@ function handleSelect(i) {
             <thead>
                 <tr class="tr-header">
                     <th class="th-number">번호</th>
-                    <th>이름</th>
+                    <th class="th-nick">이름</th>
                     <th class="th-email">이메일</th>
-                    <th>전화번호</th>
+                    <th class="th-phone">전화번호</th>
                     <th class="th-gender">성별</th>
                 </tr>
             </thead>
@@ -120,15 +123,15 @@ function handleSelect(i) {
                 <tr
                     v-for="(m, i) in g_users"
                     :key="m.user_key"
-                    @click="g_emitToParentEvt('onClickUser', i)"
-                    :style="{ background: g_selected === i ? '#f3faff' : '' }"
+                    @click="$emit('onClickUser', i)"
+                    :class="{ 'selected-row': selected === i }"
                 >
                     <td class="td-number">
                         {{ (g_page - 1) * g_size + i + 1 }}
                     </td>
-                    <td>{{ m.nick }}</td>
+                    <td class="td-nick">{{ m.nick }}</td>
                     <td class="td-email">{{ m.email }}</td>
-                    <td>{{ m.phone }}</td>
+                    <td class="td-phone">{{ m.phone }}</td>
                     <td class="td-gender">
                         {{ m.gender === "M" ? "남자" : "여자" }}
                     </td>
@@ -195,13 +198,35 @@ function handleSelect(i) {
 
 <style>
 /* 기본: 전부 보임 */
-.th-email,
-.td-email,
 .th-gender,
-.td-gender {
+.td-gender,
+.th-number,
+.td-number,
+.th-nick,
+.td-nick
+{
+    width: 60px;
+    min-width: 60px;
+    max-width: 60px;
+    text-align: center;
     display: table-cell;
 }
-
+.selected-row {
+  background: #e9f5ff !important; /* 더 잘 보이게 밝은 파랑 추천 */
+  color: #1565c0;
+}
+.th-email,
+.td-email{
+    word-break: break-all;
+}
+.td-phone,
+.th-phone{
+        width: 130px;
+    min-width: 130px;
+    max-width: 130px;
+    text-align: center;
+    display: table-cell;
+}
 .user-table th,
 .user-table td {
     font-g_size: 14px;
@@ -221,7 +246,7 @@ function handleSelect(i) {
 
     input,
     button,
-    select {
+    select { 
         font-g_size: 14px !important;
         padding: 6px 9px !important;
     }
@@ -229,8 +254,8 @@ function handleSelect(i) {
 
 /* 700px 이하: 이메일도 숨김 */
 @media (max-width: 700px) {
-    .th-email,
-    .td-email {
+    .th-number,
+    .td-number {
         display: none;
     }
 
@@ -247,6 +272,11 @@ function handleSelect(i) {
 }
 
 @media (max-width: 480px) {
+      .th-email,
+    .td-email {
+        display: none;
+    }
+
     input,
     button,
     select {
@@ -290,7 +320,7 @@ function handleSelect(i) {
     background: #fff;
     color: #333;
     font-g_size: 1rem;
-    border-radius: 8px;
+    border-radius: 50%;
     outline: none;
     cursor: pointer;
     transition: background 0.12s, color 0.12s, border 0.12s;
@@ -319,8 +349,8 @@ function handleSelect(i) {
 
 .pagination-btn.active,
 .pagination-btn:disabled.active {
-    background: #e0e0e0;
-    color: #222;
+    background: rgb(41, 169, 219);
+    color: white;
     border: 1.5px solid #d0d0d0;
     font-weight: 600;
     pointer-events: none;

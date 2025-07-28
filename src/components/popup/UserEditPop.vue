@@ -237,7 +237,6 @@ function limitAgeLength(e) {
 .modal-body {
     display: flex;
     flex-direction: column;
-    gap: 13px;
 }
 
 .form-row {

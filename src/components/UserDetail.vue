@@ -4,6 +4,7 @@ const g_emitToParentEvt = defineEmits(["onBtnUserUpdate", "onBtnUserDelete"]);
 </script>
 
 <template>
+    
     <div class="memmber-detail-header">
         <div class="detail-title" v-if="userDetail">
             {{ userDetail.nick }}님 상세정보
@@ -27,7 +28,7 @@ const g_emitToParentEvt = defineEmits(["onBtnUserUpdate", "onBtnUserDelete"]);
             <span class="value bordered">{{
                 userDetail.gender === "M" ? "남자" : "여자"
             }}</span>
-        </div>
+        </div> 
 
         <div class="userDetail-detail-buttons">
             <button
@@ -57,6 +58,7 @@ const g_emitToParentEvt = defineEmits(["onBtnUserUpdate", "onBtnUserDelete"]);
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
+    align-items: center;
     justify-content: center;
     min-height: 62vh;
     max-height: 62vh;
@@ -84,7 +86,7 @@ const g_emitToParentEvt = defineEmits(["onBtnUserUpdate", "onBtnUserDelete"]);
 }
 
 .label {
-    min-width: 90px;
+    min-width: 60px;
     font-weight: 500;
     font-size: clamp(10px, 20vw, 15px);
     text-align: left;
@@ -98,7 +100,7 @@ const g_emitToParentEvt = defineEmits(["onBtnUserUpdate", "onBtnUserDelete"]);
 }
 
 .value.bordered {
-    border-left: 2px solid #ccc;
+    /* border-left: 2px solid #ccc; */
 }
 
 .userDetail-detail-buttons {
@@ -107,6 +109,8 @@ const g_emitToParentEvt = defineEmits(["onBtnUserUpdate", "onBtnUserDelete"]);
     justify-content: center;
     gap: 12px;
     font-size: clamp(10px, 20vw, 15px);
+    position: relative;
+    top: 20%;
 }
 
 .button:hover,

@@ -13,7 +13,7 @@ defineProps({
 			<img src="../assets/saeumlogo.png" alt="로고" class="logo-img" />
 		</div>
 		<div class="header-title">
-			새움소프트 회원관리 (총: {{ totalCount }}명)
+			새움소프트 OJT 템플릿
 		</div>
 		<div class="logo-area"></div> <!-- 오른쪽도 같은 크기로 공간 확보 -->
 	</header>
@@ -63,7 +63,7 @@ defineProps({
 	}
 
 	.header-title {
-		font-size: 12px;
+		font-size: 18px;
 		letter-spacing: -0.5px;
 	}
 }
@@ -83,7 +83,7 @@ defineProps({
 	}
 
 	.header-title {
-		font-size: 10px;
+		font-size: 18px;
 		font-weight: 600;
 		word-break: keep-all;
 		white-space: normal;

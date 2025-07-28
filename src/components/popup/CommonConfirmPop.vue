@@ -42,13 +42,14 @@ const g_emitToParentEvt = defineEmits(["onConfirm", "onCancel"]);
                     class="modal-footer"
                     style="display: flex; gap: 14px; justify-content: center"
                 >
-                    <button @click="g_emitToParentEvt('onCancel')">취소</button>
                     <button
                         @click="g_emitToParentEvt('onConfirm')"
                         class="danger"
                     >
                         {{ popConfirmMsg }}
                     </button>
+                    <button @click="g_emitToParentEvt('onCancel')">취소</button>
+                    
                 </div>
             </div>
         </div>
