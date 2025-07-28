@@ -7,7 +7,6 @@ import UserTable from "./UserTable.vue";
 import UserDetail from "./UserDetail.vue";
 import FooterSection from "./FooterSection.vue";
 import UserEditPop from "./popup/UserEditPop.vue";
-import UserDeletePop from "./popup/UserDeletePop.vue";
 import CommonConfirmPop from "./popup/CommonConfirmPop.vue";
 
 import {
@@ -61,7 +60,7 @@ async function onSaveUser(userData) {
     await searchUserList(g_userStore.page.value);
 }
 function onWindowResizing() {
-  g_isMobile.value = window.innerWidth <= 480;
+    g_isMobile.value = window.innerWidth <= 480;
 }
 // 삭제 시 예시 -> onDeleteUser
 async function onDeleteUser() {
@@ -73,7 +72,7 @@ async function onDeleteUser() {
 
 async function onClickUser(idx) {
     g_selectedIdx.value = idx;
-    console.log(g_selectedIdx,idx);
+    console.log(g_selectedIdx, idx);
     const mem = g_userStore.users[idx];
     if (mem) await searchUserListDetail(mem.user_key);
 }
@@ -100,10 +99,10 @@ async function searchUserListDetail(id) {
 
 onMounted(() => {
     searchUserList();
-    window.addEventListener('resize', onWindowResizing);
+    window.addEventListener("resize", onWindowResizing);
 });
 onUnmounted(() => {
-  window.removeEventListener('resize', onWindowResizing);
+    window.removeEventListener("resize", onWindowResizing);
 });
 // 팝업 열기/닫기
 // openAddUser, openEditUser, closeEditUser
@@ -190,7 +189,6 @@ async function onLblUserDetail(id) {
                     @onBtnUserDelete="onBtnUserDelete"
                 />
             </aside>
-
         </main>
         <UserEditPop
             :visible="g_showUpdateModal"
