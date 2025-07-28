@@ -11,11 +11,11 @@ const g_page = computed(() => g_userStore.page);
 const g_totalPages = computed(() => g_userStore.totalPages);
 const g_size = computed(() => g_userStore.size);
 const g_selectedIdx = ref(0); // 필요하면 store에도 만들고 관리!
-//const g_emitToParentEvt = defineEmits(['select', 'changePage', 'search','add']);
+
 const g_emitToParentEvt = defineEmits([
-    "on-lbl-user-detail",
-    "on-btn-user-search",
-    "on-btn-user-add",
+    "onUserClick",
+    "onBtnUserSearch",
+    "onBtnUserAdd",
 ]);
 
 const g_searchKeyword = ref("");

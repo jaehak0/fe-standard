@@ -8,6 +8,8 @@ import UserDetail from "./UserDetail.vue";
 import FooterSection from "./FooterSection.vue";
 import UserEditPop from "./popup/UserEditPop.vue";
 import UserDeletePop from "./popup/UserDeletePop.vue";
+import CommonConfirmPop from "./popup/CommonConfirmPop.vue";
+
 import {
     reqUserList,
     reqInsertUser,
@@ -27,6 +29,9 @@ const g_editUser = ref(null);
 const g_showDeleteModal = ref(false);
 const g_deleteTarget = ref(null);
 const g_userStore = useUserStore();
+const g_commPopVisible = ref(false);
+const g_popHeaderMsg = ref("");
+const g_popBodyMsg = ref("");
 
 function showToast(msg = "저장되었습니다!") {
     g_toastMessage.value = msg;
@@ -128,6 +133,9 @@ function hideUserPop() {
     g_showUpdateModal.value = false;
 }
 
+function callbackCommPopConfirm() {}
+function callbackCommPopCancel() {}
+
 async function onLblUserDetail(id) {
     const detail = g_userStore.users.find((m) => m.user_key === id);
     g_userStore.selectedUser = detail || null;
@@ -139,19 +147,24 @@ async function onLblUserDetail(id) {
 
         <main class="layout-main">
             <section class="table-area">
-                <UserTable :users="g_userStore.users" :selected="g_selectedIdx"
-                :page="page" :totalPages="g_userStore.totalPages" :size="size"
-                @on-lbl-user-detail="onLblUserDetail" // onClick
-                @onBtnUserSearch="onBtnUserSearch"
-                @on-btn-user-add="onBtnUserAdd" />
+                <UserTable
+                    :users="g_userStore.users"
+                    :selected="g_selectedIdx"
+                    :page="page"
+                    :totalPages="g_userStore.totalPages"
+                    :size="size"
+                    @onUserClick="onUserClick"
+                    @onBtnUserSearch="onBtnUserSearch"
+                    @onBtnUserAdd="onBtnUserAdd"
+                />
                 <!-- add -> btnAddUser , 함수 : onBtnAddUser -->
             </section>
             <aside class="detail-area">
                 <UserDetail
                     v-if="g_userStore.users.length"
                     :user="g_userStore.users[g_selectedIdx]"
-                    @on-btn-user-update="onBtnUserUpdate"
-                    @on-btn-user-delete="onBtnUserDelete"
+                    @onBtnUserUpdate="onBtnUserUpdate"
+                    @onBtnUserDelete="onBtnUserDelete"
                 />
             </aside>
         </main>
@@ -162,12 +175,15 @@ async function onLblUserDetail(id) {
             :onSubmit="onSaveUser"
             :onClose="hideUserPop"
         />
-        <UserDeletePop
-            :visible="g_showDeleteModal"
-            :user="g_deleteTarget"
-            :onSubmit="onDeleteUser"
-            :onClose="hideUserDeletePop"
+
+        <CommonPopup
+            v-model:visible="g_commPopVisible"
+            :popHeaderMsg="g_popHeaderMsg"
+            :popBodyMsg="g_popBodyMsg"
+            :onConfirm="callbackCommPopConfirm"
+            :onCancel="callbackCommPopCancel"
         />
+
         <Toast :message="g_toastMessage" :show="g_toastShow" :duration="2000" />
         <FooterSection />
     </div>
