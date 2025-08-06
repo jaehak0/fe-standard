@@ -48,7 +48,7 @@ const g_emitToParentEvt = defineEmits(["onConfirm", "onCancel"]);
                     >
                         {{ popConfirmMsg }}
                     </button>
-                    <button @click="g_emitToParentEvt('onCancel')">취소</button>
+                    <button class="danger" @click="g_emitToParentEvt('onCancel')">취소</button>
                     
                 </div>
             </div>
@@ -98,7 +98,7 @@ const g_emitToParentEvt = defineEmits(["onConfirm", "onCancel"]);
 }
 
 .danger {
-    background: #fa4747;
+    background: #3e77fa;
     color: #fff;
     border: none;
     border-radius: 5px;

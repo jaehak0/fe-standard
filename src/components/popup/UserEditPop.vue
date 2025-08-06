@@ -183,7 +183,7 @@ function limitAgeLength(e) {
                     <button type="submit" class="primary">
                         {{ g_editYn ? "저장" : "추가" }}
                     </button>
-                    <button type="button" @click="onClose">취소</button>
+                    <button class="primary" type="button" @click="onClose">취소</button>
                 </div>
             </form>
         </div>
