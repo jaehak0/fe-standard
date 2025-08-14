@@ -94,27 +94,27 @@ my-vue-app/
     ```
 
 ### 3. 함수 네이밍 컨벤션
-- **이벤트 핸들러**: `on` 접두사 사용
+- **이벤트 핸들러**: `on` 접두사 사용, 이후 명사 두단어 이상
   ```javascript
   function onBtnSubmit() { ... }
   function onClickUser(idx) { ... }
   function onWindowResizing() { ... }
   ```
 
-- **동작 함수**: 동사로 시작
+- **동작 함수**: 동사로 시작, 이후 명사 두단어 이상
   ```javascript
   function showToast(msg) { ... }
   function hideUserPop() { ... }
   function formatPhone(e) { ... }
   ```
 
-- **API 호출 함수**: `req` 접두사 사용
+- **API 호출 함수**: `req` 접두사 사용, 이후 명사 두단어 이상
   ```javascript
   async function reqUserList(params) { ... }
   async function reqInsertUser(user) { ... }
   ```
 
-- **콜백 함수**: `callback` 접두사 사용
+- **콜백 함수**: `callback` 접두사 사용, 이후 명사 두단어 이상
   ```javascript
   function callbackCommPopConfirm() { ... }
   function callbackCommPopCancel() { ... }
