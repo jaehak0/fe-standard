@@ -67,7 +67,7 @@ my-vue-app/
 
 ### 2. 변수 네이밍 컨벤션
 - **접두사 규칙**:
-  - 전역/중요 변수는 `g_` 접두사 사용:
+  - 전역 변수는 `g_` 접두사 사용:
     ```javascript
     const g_userStore = useUserStore();
     const g_editMode = ref("add");
